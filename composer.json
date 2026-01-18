@@ -10,7 +10,6 @@
     },
     "autoload": {
         "psr-4": {
-            "DB\\": "db/",
             "Http\\": "http/",
             "Core\\": "core/"
         }
