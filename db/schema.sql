@@ -1,97 +1,115 @@
--- Active: 1738649270477@@127.0.0.1@5432@usermgr
--- 1. Create Tables
+-- User Management System Database Schema (PostgreSQL)
+-- 1. Drop existing tables if they exist (for clean setup)
+
+DROP TABLE IF EXISTS roles_permission CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS permissions CASCADE;
+DROP TABLE IF EXISTS features CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+
+-- 2. Create Tables with proper constraints
 
 CREATE TABLE roles (
-    id INT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE features (
-    id INT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE permissions (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    features_id INT,
-    FOREIGN KEY (features_id) REFERENCES features (id)
+    feature_id INT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (feature_id) REFERENCES features (id) ON DELETE CASCADE,
+    UNIQUE (name, feature_id)
 );
 
 CREATE TABLE roles_permission (
-    id INT PRIMARY KEY,
-    role_id INT,
-    permission_id INT,
-    FOREIGN KEY (role_id) REFERENCES roles (id),
-    FOREIGN KEY (permission_id) REFERENCES permissions (id)
+    id SERIAL PRIMARY KEY,
+    role_id INT NOT NULL,
+    permission_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
+    FOREIGN KEY (permission_id) REFERENCES permissions (id) ON DELETE CASCADE,
+    UNIQUE (role_id, permission_id)
 );
 
 CREATE TABLE users (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    role_id INT,
-    FOREIGN KEY (role_id) REFERENCES roles (id)
+    role_id INT NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE RESTRICT
 );
 
--- 2. Insert Reference Data
+-- 3. Create indexes for better performance
+CREATE INDEX idx_users_role_id ON users (role_id);
+CREATE INDEX idx_users_name ON users (name);
+CREATE INDEX idx_permissions_feature_id ON permissions (feature_id);
+CREATE INDEX idx_roles_permission_role_id ON roles_permission (role_id);
+CREATE INDEX idx_roles_permission_permission_id ON roles_permission (permission_id);
 
-INSERT INTO
-    roles (id, name)
-VALUES (1, 'admin'),
-    (2, 'operator'),
-    (3, 'Cashier');
+-- 3. Insert Reference Data
 
-INSERT INTO
-    features (id, name)
-VALUES (1, 'user'),
-    (2, 'roles'),
-    (3, 'product');
+INSERT INTO roles (name) VALUES 
+    ('admin'),
+    ('operator'), 
+    ('cashier');
 
-INSERT INTO
-    permissions (id, name, features_id)
-VALUES (1, 'create', 1),
-    (2, 'read', 1),
-    (3, 'update', 1),
-    (4, 'delete', 1),
-    (5, 'create', 2),
-    (6, 'read', 2),
-    (7, 'update', 2),
-    (8, 'delete', 2);
+INSERT INTO features (name, description) VALUES 
+    ('user', 'User management functionality'),
+    ('roles', 'Role and permission management'),
+    ('product', 'Product management functionality');
 
--- 3. Insert Mapping Data (Roles to Permissions)
+INSERT INTO permissions (name, feature_id, description) VALUES 
+    ('create', 1, 'Create new users'),
+    ('read', 1, 'View user information'),
+    ('update', 1, 'Edit user information'),
+    ('delete', 1, 'Delete users'),
+    ('create', 2, 'Create new roles'),
+    ('read', 2, 'View roles and permissions'),
+    ('update', 2, 'Edit roles and permissions'),
+    ('delete', 2, 'Delete roles'),
+    ('create', 3, 'Create new products'),
+    ('read', 3, 'View products'),
+    ('update', 3, 'Edit products'),
+    ('delete', 3, 'Delete products');
 
--- Admin: Permissions 1-8
-INSERT INTO
-    roles_permission (id, role_id, permission_id)
-VALUES (1, 1, 1),
-    (2, 1, 2),
-    (3, 1, 3),
-    (4, 1, 4),
-    (5, 1, 5),
-    (6, 1, 6),
-    (7, 1, 7),
-    (8, 1, 8);
+-- 4. Insert Role-Permission Mappings
 
--- Operator: Mixed Permissions
-INSERT INTO
-    roles_permission (id, role_id, permission_id)
-VALUES (9, 2, 1),
-    (10, 2, 2),
-    (11, 2, 3),
-    (12, 2, 5),
-    (13, 2, 6),
-    (14, 2, 7);
+-- Admin: Full permissions (all features)
+INSERT INTO roles_permission (role_id, permission_id) VALUES 
+    (1, 1), (1, 2), (1, 3), (1, 4),  -- User permissions
+    (1, 5), (1, 6), (1, 7), (1, 8),  -- Role permissions
+    (1, 9), (1, 10), (1, 11), (1, 12); -- Product permissions
 
--- Cashier: Limited Permissions
-INSERT INTO
-    roles_permission (id, role_id, permission_id)
-VALUES (15, 3, 1),
-    (16, 3, 2),
-    (17, 3, 3);
+-- Operator: User and product management, read-only roles
+INSERT INTO roles_permission (role_id, permission_id) VALUES 
+    (2, 1), (2, 2), (2, 3),          -- User: create, read, update
+    (2, 6),                          -- Roles: read only
+    (2, 9), (2, 10), (2, 11), (2, 12); -- Product: full access
 
--- 4. Insert User Data
+-- Cashier: Limited to user read and product read
+INSERT INTO roles_permission (role_id, permission_id) VALUES 
+    (3, 2),                          -- User: read only
+    (3, 10);                         -- Product: read only
 
-INSERT INTO
-    users (id, name, role_id)
-VALUES (1, 'Kyaw Kyaw', 1),
-    (2, 'Aung Aung', 2);
+-- 5. Insert Sample User Data
+
+INSERT INTO users (name, role_id) VALUES 
+    ('Kyaw Kyaw', 1),    -- Admin user
+    ('Aung Aung', 2),    -- Operator user
+    ('Ma Ma', 3);        -- Cashier user

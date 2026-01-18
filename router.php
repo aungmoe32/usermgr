@@ -1,6 +1,10 @@
 <?php
 
-const BASE_PATH = __DIR__;
+use Core\Session;
+
+session_start();
+
+const BASE_PATH = __DIR__ . '/';
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/core/helper.php';
 
@@ -21,3 +25,5 @@ if (array_key_exists($method, $routes) && array_key_exists($uri, $routes[$method
     http_response_code(404);
     echo "<h1>404 Not Found</h1>";
 }
+
+Session::unflash();

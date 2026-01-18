@@ -2,10 +2,11 @@
 $routes = [
     'GET' => [
         '/' => 'views/home.php',
-        '/admin/users' => 'views/admin/users.php',
+        '/users' => 'views/users/list.php',
+        '/users/create' => 'views/users/create.php',
     ],
     'POST' => [
-        '/users/create' => 'http/Controllers/users/create.php',
+        '/users/store' => 'http/Controllers/users/store.php',
     ],
     'PUT' => [],
     'DELETE' => []

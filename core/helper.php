@@ -6,10 +6,18 @@ function dd($value)
 {
     echo "<pre>";
     print_r($value);
+    echo "<br><strong>Dumped Data:</strong><br>";
     var_dump($value);
     echo "</pre>";
 
     die();
+}
+
+function print_it($value)
+{
+    echo "<pre>";
+    var_dump($value);
+    echo "</pre>";
 }
 
 function urlIs($value)
@@ -69,4 +77,15 @@ function csrf_field()
 function previousUrl()
 {
     return $_SERVER['HTTP_REFERER'];
+}
+
+function db(): Core\Database
+{
+    static $database = null;
+
+    if ($database === null) {
+        $database = new Core\Database();
+    }
+
+    return $database;
 }
