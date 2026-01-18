@@ -1,0 +1,18 @@
+{
+    "name": "aungmoemt/usermgr",
+    "authors": [
+        {
+            "name": "Aung Moe Myint Thu"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "DB\\": "db/",
+            "Http\\": "http/",
+            "Core\\": "core/"
+        }
+    }
+}

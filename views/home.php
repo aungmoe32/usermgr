@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+include 'layout/header.php';
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Manager Home</title>
-</head>
+<h2>Home Page Content</h2>
+<p class="bg-green-400">This is the main content of the home page.</p>
 
-<body>
-    <h1>Welcome to the User Manager</h1>
-    <p>This is a simple home page for your user management application.</p>
-
-</body>
-
-</html>
+<?php
+// Include the footer
+require 'layout/footer.php';
+?>

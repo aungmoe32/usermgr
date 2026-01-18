@@ -1,12 +1,12 @@
 <?php
+include("vendor/autoload.php");
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // an associative array: URI => file_to_include
 $routes = [
     '/'         => 'views/home.php',
-    '/about'    => 'views/users.php',
-    '/contact'  => 'views/contact.php',
+    '/admin/users'    => 'views/admin/users.php',
 ];
 
 if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
