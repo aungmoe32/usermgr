@@ -48,6 +48,7 @@ CREATE TABLE roles_permission (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     role_id INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -109,7 +110,7 @@ INSERT INTO roles_permission (role_id, permission_id) VALUES
 
 -- 5. Insert Sample User Data
 
-INSERT INTO users (name, role_id) VALUES 
-    ('Kyaw Kyaw', 1),    -- Admin user
-    ('Aung Aung', 2),    -- Operator user
-    ('Ma Ma', 3);        -- Cashier user
+INSERT INTO users (name, email, role_id) VALUES 
+    ('Kyaw Kyaw', 'kyaw@example.com', 1),    -- Admin user
+    ('Aung Aung', 'aung@example.com', 2),    -- Operator user
+    ('Ma Ma', 'mama@example.com', 3);        -- Cashier user

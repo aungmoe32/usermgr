@@ -12,6 +12,7 @@ if ($method !== 'PUT') {
 
 $id = $_POST['id'] ?? null;
 $name = trim($_POST['name'] ?? '');
+$email = trim($_POST['email'] ?? '');
 $role_id = $_POST['role_id'] ?? null;
 $is_active = isset($_POST['is_active']) && $_POST['is_active'] !== '' ? (int)$_POST['is_active'] : 0;
 $errors = [];
@@ -26,8 +27,17 @@ if (empty($name)) {
     $errors[] = "Name is required.";
 } elseif (strlen($name) < 2) {
     $errors[] = "Name must be at least 2 characters long.";
-} elseif (strlen($name) > 255) {
-    $errors[] = "Name cannot exceed 255 characters.";
+} elseif (strlen($name) > 100) {
+    $errors[] = "Name cannot exceed 100 characters.";
+}
+
+// Validate email
+if (empty($email)) {
+    $errors[] = "Email is required.";
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Please enter a valid email address.";
+} elseif (strlen($email) > 255) {
+    $errors[] = "Email cannot exceed 255 characters.";
 }
 
 // Check if user exists
@@ -38,11 +48,12 @@ if (!$errors && $id) {
     }
 }
 
-// Check for duplicate name
-if (!$errors && $name && $id) {
-    $duplicate = db()->query("SELECT id FROM users WHERE name = ? AND id != ?", [$name, $id])->find();
+
+// Check for duplicate email (excluding current user)
+if (!$errors && $email && $id) {
+    $duplicate = db()->query("SELECT id FROM users WHERE email = ? AND id != ?", [$email, $id])->find();
     if ($duplicate) {
-        $errors[] = "A user with this name already exists.";
+        $errors[] = "A user with this email already exists.";
     }
 }
 
@@ -67,6 +78,7 @@ if ($errors) {
     Session::flash('errors', $errors);
     Session::flash('old', [
         'name' => $name,
+        'email' => $email,
         'role_id' => $role_id,
         'is_active' => $is_active
     ]);
@@ -77,8 +89,8 @@ try {
 
     // Update user
     db()->query(
-        "UPDATE users SET name = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-        [$name, $role_id, $is_active, $id]
+        "UPDATE users SET name = ?, email = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+        [$name, $email, $role_id, $is_active, $id]
     );
 
     Session::flash('success', 'User updated successfully!');
@@ -87,6 +99,7 @@ try {
     Session::flash('errors', ['Failed to update user. Please try again.']);
     Session::flash('old', [
         'name' => $name,
+        'email' => $email,
         'role_id' => $role_id,
         'is_active' => $is_active
     ]);

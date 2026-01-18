@@ -58,6 +58,25 @@ $roles = db()->query("SELECT id, name FROM roles ORDER BY name")->get();
                     <?php endif; ?>
                 </div>
 
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email Address *
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        maxlength="255"
+                        class="mt-1 block w-full px-3 py-2 border <?= isset($errors['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter email address"
+                        value="<?= htmlspecialchars($old['email'] ?? '') ?>">
+                    <?php if (isset($errors['email'])): ?>
+                        <p class="mt-1 text-sm text-red-600"><?= htmlspecialchars($errors['email']) ?></p>
+                    <?php endif; ?>
+                </div>
+
                 <!-- Role Field -->
                 <div>
                     <label for="role_id" class="block text-sm font-medium text-gray-700">

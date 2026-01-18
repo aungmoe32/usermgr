@@ -2,6 +2,7 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
     $role_id = trim($_POST['role_id'] ?? '');
 
     $errors = [];
@@ -13,6 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['name'] = 'Name must be 100 characters or less';
     }
 
+    // Validate email
+    if (empty($email)) {
+        $errors['email'] = 'Email is required';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address';
+    } elseif (strlen($email) > 255) {
+        $errors['email'] = 'Email must be 255 characters or less';
+    }
+
     // Validate role_id
     if (empty($role_id)) {
         $errors['role_id'] = 'Role is required';
@@ -20,11 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['role_id'] = 'Invalid role selected';
     }
 
-    // Check if name already exists
-    if (empty($errors['name'])) {
-        $existingUser = db()->query("SELECT id FROM users WHERE name = ?", [$name])->find();
-        if ($existingUser) {
-            $errors['name'] = 'A user with this name already exists';
+
+    // Check email already exists
+    if (empty($errors['email'])) {
+        $existingEmail = db()->query("SELECT id FROM users WHERE email = ?", [$email])->find();
+        if ($existingEmail) {
+            $errors['email'] = 'A user with this email already exists';
         }
     }
 
@@ -32,18 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             db()->query(
-                "INSERT INTO users (name, role_id) VALUES (?, ?)",
-                [$name, $role_id]
+                "INSERT INTO users (name, email, role_id) VALUES (?, ?, ?)",
+                [$name, $email, $role_id]
             );
-
-            // Success - redirect to users list or show success message
-            redirect('/users/create?success=User created successfully');
+            Core\Session::flash('success', "User created successfully");
+            redirect('/users');
         } catch (Exception $e) {
             $errors['general'] = 'Failed to create user. Please try again.';
         }
     }
 
-    // If there are errors, store them and redirect back with form data
+    // redirect back with form data if error
     if (!empty($errors)) {
         Core\Session::flash('errors', $errors);
         Core\Session::flash('old', $_POST);

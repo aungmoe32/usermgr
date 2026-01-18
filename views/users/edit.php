@@ -12,6 +12,7 @@ $user = db()->query("
     SELECT 
         u.id,
         u.name,
+        u.email,
         u.role_id,
         u.is_active
     FROM users u
@@ -30,6 +31,7 @@ $success = Core\Session::get('success');
 $old = Core\Session::get('old', []);
 
 $name = $old['name'] ?? $user['name'];
+$email = $old['email'] ?? $user['email'];
 $role_id = $old['role_id'] ?? $user['role_id'];
 $is_active = isset($old['is_active']) ? $old['is_active'] : $user['is_active'];
 ?>
@@ -105,6 +107,24 @@ $is_active = isset($old['is_active']) ? $old['is_active'] : $user['is_active'];
                             value="<?= htmlspecialchars($name) ?>"
                             class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm <?= in_array('name', array_column($errors, 0)) ? 'border-red-300' : '' ?>"
                             placeholder="Enter full name">
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email Address
+                    </label>
+                    <div class="mt-1">
+                        <input 
+                            id="email" 
+                            name="email" 
+                            type="email" 
+                            required 
+                            value="<?= htmlspecialchars($email) ?>"
+                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Enter email address"
+                        >
                     </div>
                 </div>
 
