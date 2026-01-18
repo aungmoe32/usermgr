@@ -9,7 +9,7 @@ $routes = [
     'POST' => [
         '/users/store' => 'http/Controllers/users/store.php',
         '/users/update' => 'http/Controllers/users/update.php',
+        '/users/delete' => 'http/Controllers/users/delete.php',
     ],
     'PUT' => [],
-    'DELETE' => []
 ];
