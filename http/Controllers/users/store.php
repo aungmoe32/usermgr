@@ -1,8 +1,6 @@
 <?php
 
-// Handle user creation form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate required fields
     $name = trim($_POST['name'] ?? '');
     $role_id = trim($_POST['role_id'] ?? '');
 

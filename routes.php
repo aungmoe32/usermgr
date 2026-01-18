@@ -4,9 +4,11 @@ $routes = [
         '/' => 'views/home.php',
         '/users' => 'views/users/list.php',
         '/users/create' => 'views/users/create.php',
+        '/users/edit' => 'views/users/edit.php',
     ],
     'POST' => [
         '/users/store' => 'http/Controllers/users/store.php',
+        '/users/update' => 'http/Controllers/users/update.php',
     ],
     'PUT' => [],
     'DELETE' => []
