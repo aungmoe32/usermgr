@@ -1,21 +1,21 @@
 <?php
-include("vendor/autoload.php");
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+require_once __DIR__ . '/vendor/autoload.php';
 
-// an associative array: URI => file_to_include
-$routes = [
-    '/'         => 'views/home.php',
-    '/admin/users'    => 'views/admin/users.php',
-];
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$method = strtoupper($_SERVER['REQUEST_METHOD']);
 
+// for assets
 if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
     return false;
 }
 
-if (array_key_exists($path, $routes)) {
-    require $routes[$path];
+require_once __DIR__ . '/routes.php';
+
+if (array_key_exists($method, $routes) && array_key_exists($uri, $routes[$method])) {
+    require $routes[$method][$uri];
 } else {
+    // Handle 404 Not Found
     http_response_code(404);
-    require 'views/404.php'; // A custom 404 page
+    echo "<h1>404 Not Found</h1>";
 }
