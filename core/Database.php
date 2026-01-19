@@ -9,11 +9,11 @@ class Database
     public $connection;
     public $statement;
 
-    public function __construct($host = 'localhost', $port = 5432, $dbname = 'usermgr', $username = 'postgres', $password = '')
+    public function __construct($config)
     {
-        $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+        $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}";
 
-        $this->connection = new PDO($dsn, $username, $password, [
+        $this->connection = new PDO($dsn, $config['user'], $config['password'], [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
     }

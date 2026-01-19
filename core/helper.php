@@ -2,6 +2,7 @@
 
 use Core\Response;
 
+
 function dd($value)
 {
     echo "<pre>";
@@ -83,7 +84,8 @@ function db(): Core\Database
     static $database = null;
 
     if ($database === null) {
-        $database = new Core\Database();
+        $config = require_once base_path('config/db.php');
+        $database = new Core\Database($config);
     }
 
     return $database;
