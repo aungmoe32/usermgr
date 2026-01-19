@@ -13,6 +13,8 @@ if ($method !== 'PUT') {
 $id = $_POST['id'] ?? null;
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
+$password_confirmation = $_POST['password_confirmation'] ?? '';
 $role_id = $_POST['role_id'] ?? null;
 $is_active = isset($_POST['is_active']) && $_POST['is_active'] !== '' ? (int)$_POST['is_active'] : 0;
 $errors = [];
@@ -57,6 +59,23 @@ if (!$errors && $email && $id) {
     }
 }
 
+// Validate password (only if provided)
+if (!empty($password) || !empty($password_confirmation)) {
+    if (empty($password)) {
+        $errors[] = "Password is required when changing password.";
+    } elseif (strlen($password) < 8) {
+        $errors[] = "Password must be at least 8 characters long.";
+    } elseif (strlen($password) > 255) {
+        $errors[] = "Password must be 255 characters or less.";
+    }
+
+    if (empty($password_confirmation)) {
+        $errors[] = "Password confirmation is required when changing password.";
+    } elseif ($password !== $password_confirmation) {
+        $errors[] = "Passwords do not match.";
+    }
+}
+
 // Validate role_id
 if (!$errors) {
     if (empty($role_id)) {
@@ -86,12 +105,19 @@ if ($errors) {
 }
 
 try {
+    if (!empty($password)) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    // Update user
-    db()->query(
-        "UPDATE users SET name = ?, email = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
-        [$name, $email, $role_id, $is_active, $id]
-    );
+        db()->query(
+            "UPDATE users SET name = ?, email = ?, password = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $email, $hashedPassword, $role_id, $is_active, $id]
+        );
+    } else {
+        db()->query(
+            "UPDATE users SET name = ?, email = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?",
+            [$name, $email, $role_id, $is_active, $id]
+        );
+    }
 
     Session::flash('success', 'User updated successfully!');
     redirect('/users');

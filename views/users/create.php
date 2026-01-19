@@ -66,6 +66,42 @@ require base_path('views/layout/header.php');
                     <?php endif; ?>
                 </div>
 
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password *
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        minlength="8"
+                        class="mt-1 block w-full px-3 py-2 border <?= isset($errors['password']) ? 'border-red-500' : 'border-gray-300' ?> rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter password (minimum 8 characters)">
+                    <?php if (isset($errors['password'])): ?>
+                        <p class="mt-1 text-sm text-red-600"><?= htmlspecialchars($errors['password']) ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
+                        Confirm Password *
+                    </label>
+                    <input
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        type="password"
+                        required
+                        minlength="8"
+                        class="mt-1 block w-full px-3 py-2 border <?= isset($errors['password_confirmation']) ? 'border-red-500' : 'border-gray-300' ?> rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Confirm password">
+                    <?php if (isset($errors['password_confirmation'])): ?>
+                        <p class="mt-1 text-sm text-red-600"><?= htmlspecialchars($errors['password_confirmation']) ?></p>
+                    <?php endif; ?>
+                </div>
+
                 <!-- Role Field -->
                 <div>
                     <label for="role_id" class="block text-sm font-medium text-gray-700">

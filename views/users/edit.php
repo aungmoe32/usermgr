@@ -116,6 +116,50 @@ require __DIR__ . '/../layout/header.php';
                     </div>
                 </div>
 
+                <!-- Password Fields -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+                    <p class="text-sm text-gray-600 mb-4">Leave password fields empty to keep current password</p>
+                    
+                    <!-- New Password Field -->
+                    <div class="mb-4">
+                        <label for="password" class="block text-sm font-medium text-gray-700">
+                            New Password
+                        </label>
+                        <div class="mt-1">
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                minlength="8"
+                                class="appearance-none block w-full px-3 py-2 border <?= isset($errors['password']) ? 'border-red-500' : 'border-gray-300' ?> rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="Enter new password (minimum 8 characters)">
+                            <?php if (isset($errors['password'])): ?>
+                                <p class="mt-1 text-sm text-red-600"><?= htmlspecialchars($errors['password']) ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Confirm New Password Field -->
+                    <div class="mb-4">
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
+                            Confirm New Password
+                        </label>
+                        <div class="mt-1">
+                            <input
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                type="password"
+                                minlength="8"
+                                class="appearance-none block w-full px-3 py-2 border <?= isset($errors['password_confirmation']) ? 'border-red-500' : 'border-gray-300' ?> rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="Confirm new password">
+                            <?php if (isset($errors['password_confirmation'])): ?>
+                                <p class="mt-1 text-sm text-red-600"><?= htmlspecialchars($errors['password_confirmation']) ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Active Status Field -->
                 <div>
                     <div class="flex items-center justify-between">

@@ -49,6 +49,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -110,7 +111,7 @@ INSERT INTO roles_permission (role_id, permission_id) VALUES
 
 -- 5. Insert Sample User Data
 
-INSERT INTO users (name, email, role_id) VALUES 
-    ('Kyaw Kyaw', 'kyaw@example.com', 1),    -- Admin user
-    ('Aung Aung', 'aung@example.com', 2),    -- Operator user
-    ('Ma Ma', 'mama@example.com', 3);        -- Cashier user
+INSERT INTO users (name, email, password, role_id) VALUES 
+    ('Kyaw Kyaw', 'kyaw@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),    -- Admin user (password: password)
+    ('Aung Aung', 'aung@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2),    -- Operator user (password: password)
+    ('Ma Ma', 'mama@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3);        -- Cashier user (password: password)

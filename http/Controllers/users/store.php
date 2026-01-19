@@ -3,6 +3,8 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $password_confirmation = $_POST['password_confirmation'] ?? '';
     $role_id = trim($_POST['role_id'] ?? '');
 
     $errors = [];
@@ -21,6 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['email'] = 'Please enter a valid email address';
     } elseif (strlen($email) > 255) {
         $errors['email'] = 'Email must be 255 characters or less';
+    }
+
+    // Validate password
+    if (empty($password)) {
+        $errors['password'] = 'Password is required';
+    } elseif (strlen($password) < 8) {
+        $errors['password'] = 'Password must be at least 8 characters long';
+    } elseif (strlen($password) > 255) {
+        $errors['password'] = 'Password must be 255 characters or less';
+    }
+
+    // Validate password confirmation
+    if (empty($password_confirmation)) {
+        $errors['password_confirmation'] = 'Password confirmation is required';
+    } elseif ($password !== $password_confirmation) {
+        $errors['password_confirmation'] = 'Passwords do not match';
     }
 
     // Validate role_id
@@ -42,9 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If validation passes, create the user
     if (empty($errors)) {
         try {
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
             db()->query(
-                "INSERT INTO users (name, email, role_id) VALUES (?, ?, ?)",
-                [$name, $email, $role_id]
+                "INSERT INTO users (name, email, password, role_id) VALUES (?, ?, ?, ?)",
+                [$name, $email, $hashedPassword, $role_id]
             );
             Core\Session::flash('success', "User created successfully");
             redirect('/users');
