@@ -14,5 +14,4 @@ $routes = [
         '/users/delete' => 'http/Controllers/users/delete.php',
         '/roles/store' => 'http/Controllers/roles/store.php',
     ],
-    'PUT' => [],
 ];

@@ -5,18 +5,35 @@ require __DIR__ . '/../layout/header.php';
 $success = Core\Session::get('success');
 $errors = Core\Session::get('errors', []);
 
-// Fetch all roles with user count
+// Fetch all roles with user count and permissions
 $roles = db()->query("
     SELECT 
         r.id,
         r.name,
         r.created_at,
-        COUNT(u.id) as user_count
+        COUNT(DISTINCT u.id) as user_count
     FROM roles r
     LEFT JOIN users u ON r.id = u.role_id
     GROUP BY r.id, r.name, r.created_at
     ORDER BY r.created_at DESC
 ")->get();
+
+// Fetch permissions for each role
+foreach ($roles as &$role) {
+    $permissions = db()->query("
+        SELECT 
+            p.name as permission_name,
+            f.name as feature_name
+        FROM roles_permission rp
+        JOIN permissions p ON rp.permission_id = p.id
+        JOIN features f ON p.feature_id = f.id
+        WHERE rp.role_id = ?
+        ORDER BY f.name, p.name
+    ", [$role['id']])->get();
+    
+    $role['permissions'] = $permissions;
+    $role['permission_count'] = count($permissions);
+}
 
 ?>
 
@@ -198,6 +215,9 @@ $roles = db()->query("
                                 Role
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Permissions
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Users
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -228,6 +248,28 @@ $roles = db()->query("
                                                 ID: <?= htmlspecialchars($role['id']) ?>
                                             </div>
                                         </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        <?php if (!empty($role['permissions'])): ?>
+                                            <?php 
+                                            $groupedPerms = [];
+                                            foreach ($role['permissions'] as $perm) {
+                                                $groupedPerms[$perm['feature_name']][] = $perm['permission_name'];
+                                            }
+                                            ?>
+                                            <?php foreach ($groupedPerms as $feature => $perms): ?>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 capitalize">
+                                                    <?= htmlspecialchars($feature) ?>: <?= htmlspecialchars(implode(', ', $perms)) ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <span class="text-xs text-gray-400 italic">No permissions</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="mt-1 text-xs text-gray-500">
+                                        <?= $role['permission_count'] ?> permission<?= $role['permission_count'] !== 1 ? 's' : '' ?>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

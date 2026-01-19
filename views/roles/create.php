@@ -1,10 +1,34 @@
 <?php
 require __DIR__ . '/../layout/header.php';
 
-// Get flash data
 $errors = Core\Session::get('errors', []);
 $success = Core\Session::get('success');
 $old = Core\Session::get('old', []);
+
+// Fetch all features and permissions
+$features = db()->query("
+    SELECT 
+        f.id,
+        f.name,
+        f.description,
+        p.id as permission_id,
+        p.name as permission_name,
+        p.description as permission_description
+    FROM features f
+    JOIN permissions p ON f.id = p.feature_id
+    ORDER BY f.name, p.name
+")->get();
+
+// Group permissions by feature
+$groupedPermissions = [];
+foreach ($features as $feature) {
+    $groupedPermissions[$feature['name']][] = [
+        'id' => $feature['permission_id'],
+        'name' => $feature['permission_name'],
+        'description' => $feature['permission_description']
+    ];
+}
+
 ?>
 
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -19,7 +43,7 @@ $old = Core\Session::get('old', []);
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            
+
             <!-- Success Message -->
             <?php if ($success): ?>
                 <div class="mb-4 bg-green-50 border border-green-200 rounded-md p-4">
@@ -85,21 +109,62 @@ $old = Core\Session::get('old', []);
                     <?php endif; ?>
                 </div>
 
+                <!-- Permissions Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-4">
+                        Permissions *
+                    </label>
+                    <div class="space-y-6">
+                        <?php foreach ($groupedPermissions as $featureName => $permissions): ?>
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-3 capitalize">
+                                    <?= htmlspecialchars($featureName) ?> Management
+                                </h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <?php foreach ($permissions as $permission): ?>
+                                        <div class="flex items-start">
+                                            <div class="flex items-center h-5">
+                                                <input
+                                                    id="permission_<?= $permission['id'] ?>"
+                                                    name="permissions[]"
+                                                    type="checkbox"
+                                                    value="<?= $permission['id'] ?>"
+                                                    <?= in_array($permission['id'], $old['permissions'] ?? []) ? 'checked' : '' ?>
+                                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                            </div>
+                                            <div class="ml-3 text-sm">
+                                                <label for="permission_<?= $permission['id'] ?>" class="font-medium text-gray-700 capitalize cursor-pointer">
+                                                    <?= htmlspecialchars($permission['name']) ?>
+                                                </label>
+                                                <?php if (!empty($permission['description'])): ?>
+                                                    <p class="text-gray-500 text-xs"><?= htmlspecialchars($permission['description']) ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (isset($errors['permissions'])): ?>
+                        <p class="mt-2 text-sm text-red-600"><?= htmlspecialchars($errors['permissions']) ?></p>
+                    <?php endif; ?>
+                    <p class="mt-2 text-xs text-gray-500">Select at least one permission for this role</p>
+                </div>
+
                 <!-- Submit Buttons -->
                 <div class="flex space-x-3">
-                    <button 
+                    <button
                         type="submit"
-                        class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
-                    >
+                        class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                         Create Role
                     </button>
-                    <a 
-                        href="/roles" 
-                        class="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
-                    >
+                    <a
+                        href="/roles"
+                        class="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         Cancel
                     </a>
                 </div>

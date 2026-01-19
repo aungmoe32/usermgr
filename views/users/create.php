@@ -4,12 +4,11 @@ use Core\Session;
 
 require base_path('views/layout/header.php');
 
-// Get errors and old input from session
 $errors = Core\Session::get('errors') ?? [];
 $old = Core\Session::get('old') ?? [];
 $success = $_GET['success'] ?? null;
 
-// Fetch roles from database
+// Fetch roles 
 $roles = db()->query("SELECT id, name FROM roles ORDER BY name")->get();
 ?>
 
@@ -111,6 +110,11 @@ $roles = db()->query("SELECT id, name FROM roles ORDER BY name")->get();
                     href="/users"
                     class="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
                     Cancel
+                </a>
+            </div>
+            <div class="text-center">
+                <a href="/users" class="text-sm text-indigo-600 hover:text-indigo-500">
+                    ← Back to Users
                 </a>
             </div>
         </form>
