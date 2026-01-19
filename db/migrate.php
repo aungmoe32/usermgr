@@ -1,18 +1,26 @@
 <?php
-$db_name = 'usermgr';
-$db_user = 'postgres';
-$sql_file_path = './schema.sql';
 
-// Use shell_exec to run the psql command. The '-f' flag executes commands from a file.
-// The '--no-password' flag assumes trust or uses environment variables for password.
-// Be cautious with security when using shell_exec with user input.
-$command = "psql -d $db_name -U $db_user -f $sql_file_path";
 
-// Execute the command
-$output = shell_exec($command);
+try {
+    $dbConfig = require __DIR__ . '/../config/db.php';
 
-if ($output === null) {
-    echo "SQL file executed using psql command-line tool.";
-} else {
-    echo "Error executing SQL file via psql: " . $output;
+    $dsn = "pgsql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']}";
+
+    $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password'], [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]);
+
+    // Read the SQL file
+    $sql = file_get_contents(__DIR__ . '/postgres.sql');
+
+    // Execute the SQL commands
+    $pdo->exec($sql);
+
+    echo "Schema executed successfully!\n";
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+} catch (Exception $e) {
+    die("Error executing schema: " . $e->getMessage());
 }
