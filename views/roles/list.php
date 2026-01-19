@@ -287,7 +287,7 @@ foreach ($roles as &$role) {
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
                                         <a href="/roles/edit?id=<?= htmlspecialchars($role['id']) ?>"
-                                            class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                           class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
                                             Edit
                                         </a>
                                         <?php if ($role['user_count'] == 0): ?>
