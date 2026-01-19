@@ -1,40 +1,5 @@
 <?php
 require __DIR__ . '/../layout/header.php';
-
-// Get flash messages
-$success = Core\Session::get('success');
-$errors = Core\Session::get('errors', []);
-
-// Fetch all roles with user count and permissions
-$roles = db()->query("
-    SELECT 
-        r.id,
-        r.name,
-        r.created_at,
-        COUNT(DISTINCT u.id) as user_count
-    FROM roles r
-    LEFT JOIN users u ON r.id = u.role_id
-    GROUP BY r.id, r.name, r.created_at
-    ORDER BY r.created_at DESC
-")->get();
-
-// Fetch permissions for each role
-foreach ($roles as &$role) {
-    $permissions = db()->query("
-        SELECT 
-            p.name as permission_name,
-            f.name as feature_name
-        FROM roles_permission rp
-        JOIN permissions p ON rp.permission_id = p.id
-        JOIN features f ON p.feature_id = f.id
-        WHERE rp.role_id = ?
-        ORDER BY f.name, p.name
-    ", [$role['id']])->get();
-    
-    $role['permissions'] = $permissions;
-    $role['permission_count'] = count($permissions);
-}
-
 ?>
 
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -253,7 +218,7 @@ foreach ($roles as &$role) {
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-1">
                                         <?php if (!empty($role['permissions'])): ?>
-                                            <?php 
+                                            <?php
                                             $groupedPerms = [];
                                             foreach ($role['permissions'] as $perm) {
                                                 $groupedPerms[$perm['feature_name']][] = $perm['permission_name'];
@@ -287,7 +252,7 @@ foreach ($roles as &$role) {
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
                                         <a href="/roles/edit?id=<?= htmlspecialchars($role['id']) ?>"
-                                           class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                            class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
                                             Edit
                                         </a>
                                         <?php if ($role['user_count'] == 0): ?>
@@ -346,12 +311,12 @@ foreach ($roles as &$role) {
                 </p>
             </div>
             <div class="flex px-4 py-3 space-x-3">
-                <button id="confirmDeleteBtn" 
-                        class="flex-1 px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 cursor-pointer">
+                <button id="confirmDeleteBtn"
+                    class="flex-1 px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 cursor-pointer">
                     Delete Role
                 </button>
-                <button onclick="closeDeleteModal()" 
-                        class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer">
+                <button onclick="closeDeleteModal()"
+                    class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer">
                     Cancel
                 </button>
             </div>
@@ -367,37 +332,37 @@ foreach ($roles as &$role) {
 </form>
 
 <script>
-function confirmDelete(roleId, roleName, permissionCount) {
-    document.getElementById('deleteRoleId').value = roleId;
-    document.getElementById('deleteRoleName').textContent = roleName;
-    
-    const infoText = `This role has ${permissionCount} permission${permissionCount !== 1 ? 's' : ''} assigned.`;
-    document.getElementById('deleteRoleInfo').textContent = infoText;
-    
-    document.getElementById('deleteModal').classList.remove('hidden');
-}
+    function confirmDelete(roleId, roleName, permissionCount) {
+        document.getElementById('deleteRoleId').value = roleId;
+        document.getElementById('deleteRoleName').textContent = roleName;
 
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
+        const infoText = `This role has ${permissionCount} permission${permissionCount !== 1 ? 's' : ''} assigned.`;
+        document.getElementById('deleteRoleInfo').textContent = infoText;
 
-document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-    document.getElementById('deleteForm').submit();
-});
-
-// Close modal when clicking outside
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDeleteModal();
+        document.getElementById('deleteModal').classList.remove('hidden');
     }
-});
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeDeleteModal();
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
     }
-});
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        document.getElementById('deleteForm').submit();
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
 </script>
 
 <?php

@@ -1,34 +1,5 @@
 <?php
 require __DIR__ . '/../layout/header.php';
-
-$errors = Core\Session::get('errors', []);
-$success = Core\Session::get('success');
-$old = Core\Session::get('old', []);
-
-// Fetch all features and permissions
-$features = db()->query("
-    SELECT 
-        f.id,
-        f.name,
-        f.description,
-        p.id as permission_id,
-        p.name as permission_name,
-        p.description as permission_description
-    FROM features f
-    JOIN permissions p ON f.id = p.feature_id
-    ORDER BY f.name, p.name
-")->get();
-
-// Group permissions by feature
-$groupedPermissions = [];
-foreach ($features as $feature) {
-    $groupedPermissions[$feature['name']][] = [
-        'id' => $feature['permission_id'],
-        'name' => $feature['permission_name'],
-        'description' => $feature['permission_description']
-    ];
-}
-
 ?>
 
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
