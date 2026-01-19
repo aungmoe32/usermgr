@@ -22,7 +22,7 @@ require_once BASE_PATH . 'routes.php';
 try {
     $router->route($uri, $method);
 } catch (CsrfTokenException $exception) {
-    Session::flash('errors', ['csrf_token' => $exception->getMessage()]);
+    Session::flash('errors', ["Page expired.", "Please refresh the page"]);
     return redirect(previousUrl());
 }
 

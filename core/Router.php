@@ -5,6 +5,7 @@ namespace Core;
 use Core\Middleware\Authenticated;
 use Core\Middleware\Guest;
 use Core\Middleware\Middleware;
+use Core\Middleware\CsrfMiddleware;
 
 class Router
 {
@@ -58,7 +59,13 @@ class Router
     {
         foreach ($this->routes as $route) {
             if ($route['uri'] === $uri && $route['method'] === strtoupper($method)) {
-                // dd(base_path('http/controllers/' . $route['controller']));
+                Middleware::applyGlobal();
+
+                // Handle route-specific middlewares if they exist
+                if ($route['middleware']) {
+                    Middleware::resolve($route['middleware']);
+                }
+
                 return require base_path('http/controllers/' . $route['controller']);
             }
         }

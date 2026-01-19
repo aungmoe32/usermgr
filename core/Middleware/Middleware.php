@@ -4,9 +4,12 @@ namespace Core\Middleware;
 
 class Middleware
 {
-    public const MAP = [
+    public const MAP = [];
+
+    public const GLOBAL = [
         'csrf' => CsrfMiddleware::class
     ];
+
 
     public static function resolve($key)
     {
@@ -14,12 +17,20 @@ class Middleware
             return;
         }
 
-        $middleware = static::MAP[$key] ?? false;
+        // Check both MAP and GLOBAL arrays for middleware
+        $middleware = static::MAP[$key] ?? static::GLOBAL[$key] ?? false;
 
         if (!$middleware) {
             throw new \Exception("No matching middleware found for key '{$key}'.");
         }
 
         (new $middleware)->handle();
+    }
+
+    public static function applyGlobal()
+    {
+        foreach (static::GLOBAL as $key => $middleware) {
+            static::resolve($key);
+        }
     }
 }
