@@ -1,5 +1,6 @@
 <?php
 
+use Core\CsrfTokenException;
 use Core\Session;
 
 session_start();
@@ -18,6 +19,12 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
 
 require_once BASE_PATH . 'routes.php';
 
-$router->route($uri, $method);
+try {
+    $router->route($uri, $method);
+} catch (CsrfTokenException $exception) {
+    Session::flash('errors', ['csrf_token' => $exception->getMessage()]);
+    return redirect(previousUrl());
+}
+
 
 Session::unflash();

@@ -6,8 +6,6 @@ use Core\Middleware\Authenticated;
 use Core\Middleware\Guest;
 use Core\Middleware\Middleware;
 
-require_once BASE_PATH . 'routes.php';
-
 class Router
 {
     protected $routes = [];
