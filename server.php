@@ -16,14 +16,8 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
     return false;
 }
 
-require_once __DIR__ . '/routes.php';
+require_once BASE_PATH . 'routes.php';
 
-if (array_key_exists($method, $routes) && array_key_exists($uri, $routes[$method])) {
-    require $routes[$method][$uri];
-} else {
-    // Handle 404 Not Found
-    http_response_code(404);
-    echo "<h1>404 Not Found</h1>";
-}
+$router->route($uri, $method);
 
 Session::unflash();
