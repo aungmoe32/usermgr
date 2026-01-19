@@ -15,5 +15,6 @@ $routes = [
         '/users/delete' => 'http/Controllers/users/delete.php',
         '/roles/store' => 'http/Controllers/roles/store.php',
         '/roles/update' => 'http/Controllers/roles/update.php',
+        '/roles/delete' => 'http/Controllers/roles/delete.php',
     ],
 ];

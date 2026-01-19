@@ -291,12 +291,12 @@ foreach ($roles as &$role) {
                                             Edit
                                         </a>
                                         <?php if ($role['user_count'] == 0): ?>
-                                            <button onclick="confirmDelete(<?= htmlspecialchars($role['id']) ?>, '<?= htmlspecialchars($role['name'], ENT_QUOTES) ?>')"
-                                                class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                            <button onclick="confirmDelete(<?= htmlspecialchars($role['id']) ?>, '<?= htmlspecialchars($role['name'], ENT_QUOTES) ?>', <?= $role['permission_count'] ?>)"
+                                                class="text-red-600 hover:text-red-900 text-sm font-medium cursor-pointer">
                                                 Delete
                                             </button>
                                         <?php else: ?>
-                                            <span class="text-gray-400 text-sm cursor-not-allowed" title="Cannot delete role with assigned users">
+                                            <span class="text-gray-400 text-sm cursor-not-allowed" title="Cannot delete role with assigned users (<?= $role['user_count'] ?> user<?= $role['user_count'] !== 1 ? 's' : '' ?>)">
                                                 Delete
                                             </span>
                                         <?php endif; ?>
@@ -325,6 +325,80 @@ foreach ($roles as &$role) {
 
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mt-2">Delete Role</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Are you sure you want to delete the role <span id="deleteRoleName" class="font-semibold"></span>?
+                </p>
+                <div class="mt-2 text-xs text-gray-400" id="deleteRoleInfo"></div>
+                <p class="mt-2 text-sm text-red-600 font-medium">
+                    This action cannot be undone and will remove all associated permissions.
+                </p>
+            </div>
+            <div class="flex px-4 py-3 space-x-3">
+                <button id="confirmDeleteBtn" 
+                        class="flex-1 px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 cursor-pointer">
+                    Delete Role
+                </button>
+                <button onclick="closeDeleteModal()" 
+                        class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Delete Form -->
+<form id="deleteForm" action="/roles/delete" method="POST" style="display: none;">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="id" id="deleteRoleId">
+    <?= csrf_field() ?>
+</form>
+
+<script>
+function confirmDelete(roleId, roleName, permissionCount) {
+    document.getElementById('deleteRoleId').value = roleId;
+    document.getElementById('deleteRoleName').textContent = roleName;
+    
+    const infoText = `This role has ${permissionCount} permission${permissionCount !== 1 ? 's' : ''} assigned.`;
+    document.getElementById('deleteRoleInfo').textContent = infoText;
+    
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    document.getElementById('deleteForm').submit();
+});
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+    }
+});
+</script>
 
 <?php
 require __DIR__ . '/../layout/footer.php';
