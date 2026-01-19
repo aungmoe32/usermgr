@@ -1,15 +1,5 @@
 <?php
-
-use Core\Session;
-
 require base_path('views/layout/header.php');
-
-$errors = Core\Session::get('errors') ?? [];
-$old = Core\Session::get('old') ?? [];
-$success = $_GET['success'] ?? null;
-
-// Fetch roles 
-$roles = db()->query("SELECT id, name FROM roles ORDER BY name")->get();
 ?>
 
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

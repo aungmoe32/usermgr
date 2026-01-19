@@ -1,39 +1,5 @@
 <?php
 require __DIR__ . '/../layout/header.php';
-
-$user_id = $_GET['id'] ?? null;
-
-if (!$user_id || !is_numeric($user_id)) {
-    header('Location: /users');
-    exit;
-}
-
-$user = db()->query("
-    SELECT 
-        u.id,
-        u.name,
-        u.email,
-        u.role_id,
-        u.is_active
-    FROM users u
-    WHERE u.id = ?
-", [$user_id])->find();
-
-if (!$user) {
-    header('Location: /users');
-    exit;
-}
-
-$roles = db()->query("SELECT id, name FROM roles ORDER BY name")->get();
-
-$errors = Core\Session::get('errors', []);
-$success = Core\Session::get('success');
-$old = Core\Session::get('old', []);
-
-$name = $old['name'] ?? $user['name'];
-$email = $old['email'] ?? $user['email'];
-$role_id = $old['role_id'] ?? $user['role_id'];
-$is_active = isset($old['is_active']) ? $old['is_active'] : $user['is_active'];
 ?>
 
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -116,15 +82,14 @@ $is_active = isset($old['is_active']) ? $old['is_active'] : $user['is_active'];
                         Email Address
                     </label>
                     <div class="mt-1">
-                        <input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            required 
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            required
                             value="<?= htmlspecialchars($email) ?>"
                             class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            placeholder="Enter email address"
-                        >
+                            placeholder="Enter email address">
                     </div>
                 </div>
 
