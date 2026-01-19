@@ -36,7 +36,13 @@ return [
 php db/migrate.php
 ```
 
-2. Start server:
+3. Composer Install
+
+```bash
+composer install
+```
+
+4. Start server:
 
 ```bash
 php -S localhost:8000 -t public/ server.php
