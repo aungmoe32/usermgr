@@ -6,6 +6,7 @@ Simple PHP application for managing users and roles with permissions.
 
 - User and role management
 - Permission system with CRUD operations
+- Authentication
 - CSRF protection
 - PostgreSQL support
 
