@@ -17,17 +17,42 @@
                     <div class="flex-shrink-0 flex items-center">
                         <h1 class="text-xl font-bold text-gray-900">UserMgr</h1>
                     </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="/" class="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Home
+                    <?php if (\Core\Authenticator::check()): ?>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                            <a href="/" class="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                                Home
+                            </a>
+                            <a href="/users" class="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                                Users
+                            </a>
+                            <a href="/roles" class="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                                Roles
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Right side navigation -->
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <?php if (\Core\Authenticator::check()): ?>
+                        <?php $user = \Core\Authenticator::user(); ?>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm text-gray-700">
+                                Welcome, <strong><?= htmlspecialchars($user['name']) ?></strong>
+                                <span class="text-xs text-gray-500">(<?= htmlspecialchars(ucfirst($user['role_name'])) ?>)</span>
+                            </span>
+                            <form method="POST" action="/logout" class="inline">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    <?php else: ?>
+                        <a href="/login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                            Login
                         </a>
-                        <a href="/users" class="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Users
-                        </a>
-                        <a href="/roles" class="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Roles
-                        </a>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
