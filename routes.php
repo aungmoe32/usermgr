@@ -6,6 +6,11 @@ $router = new Router();
 
 $router->get('/', 'home.php');
 
+// Authentication
+$router->get('/login', 'auth/loginForm.php');
+$router->post('/login', 'auth/login.php');
+$router->post('/logout', 'auth/logout.php');
+
 // Users
 $router->get('/users', 'users/index.php');
 $router->get('/users/create', 'users/create.php');
