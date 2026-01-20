@@ -4,7 +4,9 @@ namespace Core\Middleware;
 
 class Middleware
 {
-    public const MAP = [];
+    public const MAP = [
+        'authenticated' => Authenticated::class
+    ];
 
     public const GLOBAL = [
         'csrf' => CsrfMiddleware::class

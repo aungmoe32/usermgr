@@ -17,7 +17,7 @@ class Router
             'uri' => $uri,
             'controller' => $controller,
             'method' => $method,
-            'middleware' => $middlewares ?? null
+            'middlewares' => $middlewares ?? []
         ];
 
         return $this;
@@ -62,8 +62,8 @@ class Router
                 Middleware::applyGlobal();
 
                 // Handle route-specific middlewares if they exist
-                if ($route['middleware']) {
-                    Middleware::resolve($route['middleware']);
+                foreach ($route['middlewares'] as $middleware) {
+                    Middleware::resolve($middleware);
                 }
 
                 return require base_path('http/controllers/' . $route['controller']);

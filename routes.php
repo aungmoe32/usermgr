@@ -12,7 +12,7 @@ $router->post('/login', 'auth/login.php');
 $router->post('/logout', 'auth/logout.php');
 
 // Users
-$router->get('/users', 'users/index.php');
+$router->get('/users', 'users/index.php', ['authenticated']);
 $router->get('/users/create', 'users/create.php');
 $router->post('/users/store', 'users/store.php');
 $router->get('/users/edit', 'users/edit.php');
