@@ -5,7 +5,8 @@ namespace Core\Middleware;
 class Middleware
 {
     public const MAP = [
-        'authenticated' => Authenticated::class
+        'authenticated' => Authenticated::class,
+        'guest' => Guest::class
     ];
 
     public const GLOBAL = [

@@ -7,8 +7,8 @@ $router = new Router();
 $router->get('/', 'home.php');
 
 // Authentication
-$router->get('/login', 'auth/loginForm.php');
-$router->post('/login', 'auth/login.php');
+$router->get('/login', 'auth/loginForm.php', ['guest']);
+$router->post('/login', 'auth/login.php', ['guest']);
 $router->post('/logout', 'auth/logout.php', ['authenticated']);
 
 // Users

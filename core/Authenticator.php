@@ -59,6 +59,12 @@ class Authenticator
         return !self::check();
     }
 
+    public static function onlyGuest()
+    {
+        if (!self::guest()) {
+            redirect('/');
+        }
+    }
     public static function requireAuth()
     {
         if (self::guest()) {
