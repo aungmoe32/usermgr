@@ -66,7 +66,7 @@ docker compose up
 Database Migration:
 
 ```bash
-docker exec db php db/migrate.php
+docker exec app php db/migrate.php
 ```
 
 Access PgAdmin At
