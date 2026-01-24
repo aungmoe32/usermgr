@@ -35,11 +35,11 @@
                 <!-- Right side navigation -->
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     <?php if (\Core\Authenticator::check()): ?>
-                        <?php $user = \Core\Authenticator::user(); ?>
+                        <?php $authUser = \Core\Authenticator::user(); ?>
                         <div class="flex items-center space-x-4">
                             <span class="text-sm text-gray-700">
-                                Welcome, <strong><?= htmlspecialchars($user['name']) ?></strong>
-                                <span class="text-xs text-gray-500">(<?= htmlspecialchars(ucfirst($user['role_name'])) ?>)</span>
+                                Welcome, <strong><?= htmlspecialchars($authUser['name']) ?></strong>
+                                <span class="text-xs text-gray-500">(<?= htmlspecialchars(ucfirst($authUser['role_name'])) ?>)</span>
                             </span>
                             <form method="POST" action="/logout" class="inline">
                                 <?= csrf_field() ?>

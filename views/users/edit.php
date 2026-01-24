@@ -120,7 +120,7 @@ require __DIR__ . '/../layout/header.php';
                 <div class="border-t border-gray-200 pt-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
                     <p class="text-sm text-gray-600 mb-4">Leave password fields empty to keep current password</p>
-                    
+
                     <!-- New Password Field -->
                     <div class="mb-4">
                         <label for="password" class="block text-sm font-medium text-gray-700">
