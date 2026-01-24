@@ -38,21 +38,19 @@ services:
 
   #MySQL Service
   db:
-    image: mysql:5.7.22
+    image: postgres:16 # Use a specific version, e.g., postgres:16
     platform: linux/amd64
     container_name: db
-    restart: unless-stopped
     tty: true
     ports:
-      - "3306:3306"
+      - "5432:5432"
+    restart: always
     environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: your_mysql_root_password
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD:
+      POSTGRES_DB: usermgr
     volumes:
-      - dbdata:/var/lib/mysql/
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - dbdata:/var/lib/postgresql/data
     networks:
       - app-network
 
