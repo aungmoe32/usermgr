@@ -35,7 +35,7 @@ services:
     networks:
       - app-network
 
-  #MySQL Service
+  #Postgres Service
   db:
     image: postgres:16 # Use a specific version, e.g., postgres:16
     platform: linux/amd64
@@ -52,7 +52,17 @@ services:
       - dbdata:/var/lib/postgresql/data
     networks:
       - app-network
-
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: your_pgadmin_password
+    ports:
+      - "8080:80" # Access pgAdmin on http://localhost:8080
+    networks:
+      - app-network
 #Docker Networks
 networks:
   app-network:

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'host' => '127.0.0.1',
+    'host' => 'db',
     'port' => 5432,
     'user' => 'postgres',
     'password' => 'password',

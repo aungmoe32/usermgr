@@ -48,3 +48,36 @@ composer install
 ```bash
 php -S localhost:8000 -t public/ server.php
 ```
+
+## Docker Compose
+
+Composer Install
+
+```bash
+composer install
+```
+
+Compose Up
+
+```bash
+docker compose up
+```
+
+Database Migration:
+
+```bash
+docker exec db php db/migrate.php
+```
+
+Access PgAdmin At
+
+```
+http://localhost:8080
+```
+
+with
+
+```
+PGADMIN_DEFAULT_EMAIL: admin@example.com
+PGADMIN_DEFAULT_PASSWORD: your_pgadmin_password
+```
